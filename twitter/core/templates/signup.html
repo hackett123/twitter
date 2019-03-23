@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Sign up for 192 Twitter</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.7.4/css/bulma.min.css">
+    <script defer src="https://use.fontawesome.com/releases/v5.3.1/js/all.js"></script>
+  </head>
+  <body>
+  <section class="section">
+    <div class="container">
+      <h1 class="title" $dark>
+        Sign up for 192 Twitter!
+      </h1>
+      <p class="subtitle">
+
+            <form method="POST" action="/signup">
+                {% csrf_token %}
+                <div>
+                <input name="username" class="input is-primary" type="text" placeholder="username">
+            </div>
+        </br>  
+            <div>
+                <input name="email" class="input is-primary" placeholder="email" >
+            </div>
+            </br>
+            <div>
+                <input name="password" class="input is-primary" placeholder="password" type="password" />
+            </div>  
+            </br>
+                <input type="submit" class="button is-primary"/>
+            </form>
+      </p>
+    </div>
+  </section>
+  </body>
+</html>

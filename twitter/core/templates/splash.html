@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Splash</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.7.4/css/bulma.min.css">
+    <script defer src="https://use.fontawesome.com/releases/v5.3.1/js/all.js"></script>
+  </head>
+  <body>
+  <section class="section">
+    <div class="container">
+      <h1 class="title">
+        Welcome to Michael's Twitter for CIS192!!!
+      </h1>
+      <p class="subtitle">
+          Here's our splash page. More to come. Remember, every day we get better!
+      </p>
+      <p class="subtitle">
+        If you already have an account, then <a href="/login"> Log in here</a>
+      </p>
+      <p class="subtitle">
+          If you want to make an account, then <a href="/signup"> please sign up here!</a>
+        </p>
+        <p class = "subtitle">
+          Unsure if you have an account? Here's all our registered usernames below.
+        </br>
+          {%for user in users%}
+            Username : {{user.username}}
+      </br>
+          {%endfor%}
+        </br>
+        </p>
+    </div>
+  </section>
+  </body>
+</html>

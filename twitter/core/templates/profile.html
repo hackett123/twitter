@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Welcome to 192's Twitter!</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.7.4/css/bulma.min.css">
+    <script defer src="https://use.fontawesome.com/releases/v5.3.1/js/all.js"></script>
+  </head>
+  <body>
+  <section class="section">
+    <div class="container">
+      <h1 class="title">
+        Welcome to your profile page.
+      </h1>
+      <h2>You are currently logged in as {{user.username}}.  
+      </br>
+    </h2>
+      <p class="subtitle">
+          <a href="/logout"> Logout</a>
+      </br>
+        <a href="/home"> Go Home</a>
+        <p> Number of Tweets You've Made : {{user.num_tweets}}</p>
+      </p>
+      <h1 class="title">
+          Your Tweets
+      </br>
+      </h1>
+      <p class="subtitle">
+          {% for tweet in tweets %}
+          {% if tweet.author == user %}
+          <div class="box">
+                <article class="media">
+                  <div class="media-left">
+                    <figure class="image is-64x64">
+                      <img src="https://bulma.io/images/placeholders/128x128.png" alt="Image">
+                    </figure>
+                  </div>
+                  <div class="media-content">
+                    <div class="content">
+                      <p>
+                        
+                        <strong>{{tweet.author}} @ </strong><small>{{tweet.created_at}}</small>
+                      </br>
+                        {{tweet.content}}
+                        
+                      </br>
+                      This tweet belongs to you. If you don't like it anymore, you can <a href="/delete?id={{tweet.id}}"> delete it</a>
+                      
+                      </p>
+                      
+                    </div>
+                    <nav class="level is-mobile">
+                      <div class="level-left">
+                            <p>
+                                <a href="like_tweet?id={{tweet.id}}"> Like ({{tweet.likes}})</a>
+                            </p>
+                      </div>
+                    </nav>
+                  </div>
+                  {% endif %}
+                </article>
+              </div>
+          
+      </br>
+          {% endfor %}
+      </p>
+      <p>
+          Want to delete your account? We're sad to see you go :( but here's the <a href="/delete_account?id={{user.id}}"> link</a>
+      </p>
+    </div>
+  </section>
+  </body>
+</html>
