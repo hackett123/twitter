@@ -28,6 +28,6 @@ urlpatterns = [
     path("delete_account", delete_account, name="delete_account"),
     path("home", home, name="home"),
     path("profile", profile, name="profile"),
-    path("hashtag", hashtag, name="hashtag")
+    path("hashtag", hashtag, name="hashtag"),
 
 ]

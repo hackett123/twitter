@@ -87,6 +87,10 @@ def delete_account(request):
     return redirect("/")
 
 def profile(request):
+    if request.method == "POST":
+        user = request.user
+        user.bio = request.POST["bio"]
+        user.save()
     if request.user.is_authenticated:
         tweets = Tweet.objects.all()
         return render(request, 'profile.html', {"tweets":tweets})

@@ -22,6 +22,26 @@
         <a href="/home"> Go Home</a>
         <p> Number of Tweets You've Made : {{user.num_tweets}}</p>
       </p>
+      <p class = "subtitle">
+          Here's your bio :
+      </br>
+        {{user.bio}}
+    </br>
+        Do you want to change your bio? If so, you can rewrite it here
+    </br>
+    <form method="POST" action="/profile">
+        {% csrf_token %}
+        <div>
+            <input name="bio" class="input is-primary" type="text" placeholder="replace your bio here">
+        </div>
+        </br>
+        <div>
+            <input type="submit" class="button is-primary"/>
+        </div>
+    </br>
+    </form>
+
+      </p>
       <h1 class="title">
           Your Tweets
       </br>
