@@ -11,13 +11,13 @@
   <section class="section">
     <div class="container">
       <h1 class="title">
-        Welcome to Michael's Twitter Project for CIS192!!!
+        Twitter, v1.9.2
       </h1>
-      <h2>You are currently logged in as {{user.username}}. <a href="/profile?id={{user.id}}"> View Profile</a>
+      <h2>You are currently logged in as <strong>{{user.username}}</strong>. <a href="/profile?id={{user.id}}"> View Profile</a>
       </br>
     </h2>
       <p class="subtitle">
-          Want to log out? Click <a href="/logout"> here</a>
+          All done? <a href="/logout"> Logout</a>
       </p>
       <p class="subtitle">
           Something on your mind? Tell us!
@@ -33,50 +33,82 @@
         </br>
             </form>
       </p>
-      <h1 class="title">
-          Recent Tweets
-      </br>
-      </h1>
-      <p class="subtitle">
-          {% for tweet in tweets %}
-          <div class="box">
-                <article class="media">
-                  <div class="media-left">
-                    <figure class="image is-64x64">
-                      <img src="https://bulma.io/images/placeholders/128x128.png" alt="Image">
-                    </figure>
-                  </div>
-                  <div class="media-content">
-                    <div class="content">
-                      <p>
-                        <strong>{{tweet.author}} @ </strong><small>{{tweet.created_at}}</small>
-                      </br>
-                        {{tweet.content}}
-                    </br>
-                        Hashtags used : {% for hashtag in tweet.hashtags.all %} #<a href="hashtag?id={{hashtag.id}}">{{hashtag.name}}</a>, {% endfor %}
-                </br>
-                       
-                      </p>
-                      
+      <div class="columns">
+        <div class="column">
+          <h1 class="title">
+            Recent Tweets
+        </br>
+        </h1>
+        <p class="subtitle">
+            {% for tweet in tweets %}
+            <div class="box">
+                  <article class="media">
+                    <div class="media-left">
+                      <figure class="image is-64x64">
+                        <img src={{tweet.author.profile_pic}} alt="Image">
+                      </figure>
                     </div>
-                    <nav class="level is-mobile">
-                      <div class="level-left">
-                            <p>
-                                <a href="like_tweet?id={{tweet.id}}"> Like ({{tweet.likes}})</a>
-                            </p>
+                    <div class="media-content">
+                      <div class="content">
+                        <p>
+                          <strong> <a href="/profile?id={{tweet.author.id}}"> {{tweet.author}} </a> @ </strong><small>{{tweet.created_at}}</small>
+                        </br>
+                          {{tweet.content}}
+                      </br>
+                          Hashtags used : {% for hashtag in tweet.hashtags.all %} #<a href="hashtag?id={{hashtag.id}}">{{hashtag.name}}</a>, {% endfor %}
+                  </br>
+                         
+                        </p>
+                        
                       </div>
-                    </nav>
-                  </div>
-                </article>
-              </div>
+                      <nav class="level is-mobile">
+                        <div class="level-left">
+                              <p>
+                                  <a href="like_tweet?id={{tweet.id}}"> Like ({{tweet.likes}})</a>
+                              </p>
+                        </div>
+                      </nav>
+                    </div>
+                  </article>
+                </div>           
+        </br>
+            {% endfor %}
+        </p>
+        </div>
+        <div class="column">
           
-      </br>
-          {% endfor %}
-      </p>
-      <p>
-          Want to delete your account? We're sad to see you go :( but here's the <a href="/delete_account?id={{user.id}}"> link</a>
-      </p>
+          <h1 class="title">
+            Recent Hashtags
+          </h1>
+            <div class="box">
+              <p>
+            <div class="media-content">
+              <div class="content">
+                    {% for hashtag in hashtags %}
+            
+                   <a href="/hashtag?id={{hashtag.id}}"> #{{hashtag.name}} </a>
+                </br>
+                    {% endfor %}
+                </br>
+                </p>
+              </div>
+              </div>
+        </br>
+        </div>
+        
     </div>
+    
   </section>
+  <footer class="footer">
+      <div class="content has-text-centered">
+        <p>
+          Site built by Michael Hackett with the <strong>Django</strong> framework and <strong>Bulma</strong> CSS framework.
+        </br>
+        All code can be accessed upon request.
+      </br>
+        Trademark : Hackett Productions @2019
+        </p>
+      </div>
+    </footer>
   </body>
 </html>

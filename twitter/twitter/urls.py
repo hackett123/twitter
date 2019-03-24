@@ -15,7 +15,7 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
-from core.views import login_, logout_, signup_, delete_tweet, home, splash, delete_account, like_tweet, profile, hashtag
+from core.views import login_, logout_, signup_, delete_tweet, home, splash, delete_account, like_tweet, profile, hashtag, change_bio, change_pic
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -28,6 +28,8 @@ urlpatterns = [
     path("delete_account", delete_account, name="delete_account"),
     path("home", home, name="home"),
     path("profile", profile, name="profile"),
+    path("change_bio", change_bio, name="change_bio"),
+    path("change_pic", change_pic, name="change_pic"),
     path("hashtag", hashtag, name="hashtag"),
 
 ]

@@ -10,45 +10,183 @@
   <body>
   <section class="section">
     <div class="container">
+    {% if curr_user.id == requested_user.id %}
       <h1 class="title">
         Welcome to your profile page.
       </h1>
-      <h2>You are currently logged in as {{user.username}}.  
+      <h2>You are currently logged in as {{curr_user.username}}.  
       </br>
     </h2>
       <p class="subtitle">
           <a href="/logout"> Logout</a>
       </br>
         <a href="/home"> Go Home</a>
-        <p> Number of Tweets You've Made : {{user.num_tweets}}</p>
+        <p> Number of Tweets You've Made : {{curr_user.num_tweets}}</p>
+    </br>
       </p>
       <p class = "subtitle">
-          Here's your bio :
-      </br>
-        {{user.bio}}
+          <strong>Your bio </strong> : {{curr_user.bio}}
+      </p>
+      <p class = "subtitle">
+          <strong>Your profile picture </strong> : <img src={{curr_user.profile_pic}} width="128" height="128">
+      </p>
+    <p>
     </br>
-        Do you want to change your bio? If so, you can rewrite it here
-    </br>
-    <form method="POST" action="/profile">
+    <form method="POST" action="/change_bio">
         {% csrf_token %}
         <div>
-            <input name="bio" class="input is-primary" type="text" placeholder="replace your bio here">
-        </div>
-        </br>
-        <div>
+            <input name="bio" class="input is-primary" type="text" placeholder="If you want to change your bio, rewrite it here and hit submit">
             <input type="submit" class="button is-primary"/>
         </div>
+        </br>
     </br>
     </form>
+  </p>
+  <p>
+    <form method="POST" action="/change_pic">
+      {% csrf_token %}
+      <div>
+          <input name="pic" class="input is-primary" type="text" placeholder="replace with url of photo online">
+          <input type="submit" class="button is-primary"/>
+      </div>
+      </br>
+  </br>
+  </form>
 
       </p>
+
+
+
+
+      <div class="columns">
+          <div class="column">
+            <h1 class="title">
+              Your Tweets
+          </br>
+          </h1>
+          <p class="subtitle">
+              {% for tweet in tweets %}
+              {% if tweet.author == requested_user %}
+              <div class="box">
+                    <article class="media">
+                      <div class="media-left">
+                        <figure class="image is-64x64">
+                          <img src={{curr_user.profile_pic}} alt="Image">
+                        </figure>
+                      </div>
+                      <div class="media-content">
+                        <div class="content">
+                          <p>
+                            <strong> <a href="/profile?id={{tweet.author.id}}"> {{tweet.author}} </a> @ </strong><small>{{tweet.created_at}}</small>
+                          </br>
+                            {{tweet.content}}
+                          </p>
+                        </br>
+                        <p class="is-italic">
+                            This tweet belongs to you. If you don't like it anymore, you can <a href="/delete?id={{tweet.id}}"> delete it</a>
+                          </p>
+                        <p>
+                            Hashtags used : {% for hashtag in tweet.hashtags.all %} #<a href="hashtag?id={{hashtag.id}}">{{hashtag.name}}</a>, {% endfor %}
+                          </p>
+                        </div>
+                        <nav class="level is-mobile">
+                          <div class="level-left">
+                                <p>
+                                    <a href="like_tweet?id={{tweet.id}}"> Like ({{tweet.likes}})</a>
+                                </p>
+                          </div>
+                        </nav>
+                      </div>
+                    </article>
+                  </div>           
+          </br>
+              {% endif %}
+              {% endfor %}
+          </p>
+          </div>
+
+
+          <div class="column">
+            <h1 class="title">
+              Your Likes
+            </h1>
+            <p class="subtitle">
+              {% for tweet in tweets %}
+                {% if requested_user in tweet.liked_by.all %}
+                <div class="box">
+                    <article class="media">
+                      <div class="media-left">
+                        <figure class="image is-64x64">
+                          <img src="{{tweet.author.profile_pic}}" alt="Image">
+                        </figure>
+                      </div>
+                      <div class="media-content">
+                        <div class="content">
+                          <p>
+                            <strong> <a href="/profile?id={{tweet.author.id}}"> {{tweet.author}} </a> @ </strong><small>{{tweet.created_at}}</small>
+                          </br>
+                            {{tweet.content}}
+                          </p>
+                        </br>
+                        <p>
+                            Hashtags used : {% for hashtag in tweet.hashtags.all %} #<a href="hashtag?id={{hashtag.id}}">{{hashtag.name}}</a>, {% endfor %}
+                          </p>
+                        </div>
+                        <nav class="level is-mobile">
+                          <div class="level-left">
+                                <p>
+                                    <a href="like_tweet?id={{tweet.id}}"> Like ({{tweet.likes}})</a>
+                                </p>
+                          </div>
+                        </nav>
+                      </div>
+                    </article>
+                  </div>           
+                {% endif %}
+              {% endfor %}
+            </p>
+          </div>
+          <div class="column">
+              <h1 class="title">
+                Your Followers
+              </h1>
+            </div>
+      </div>
+      <footer class="footer">
+          <div class="content has-text-centered">
+            <p>
+              Want to delete your account? We hate to see you go :( but we understand. <a href="/delete_account?id={{user.id}}"> Delete</a>
+            </p>
+          </div>
+        </footer>
+    </div>
+
+  {% endif %}
+
+  {% if curr_user.id != requested_user.id %}
+  <div class="container">
       <h1 class="title">
-          Your Tweets
+        You are viewing {{requested_user.username}}'s profile.
+      </h1>
+      <p class="subtitle">
+          <a href="/logout"> Logout</a>
+      </br>
+        <a href="/home"> Go Home</a>
+        <p> Number of Tweets {{requested_user.username}} Has Made : {{requested_user.num_tweets}}</p>
+    </br>
+      </p>
+      <p class = "subtitle">
+          <strong>{{requested_user.username}}'s bio </strong> : {{requested_user.bio}}
+    </br>
+    </br>
+      </p>
+      <h1 class="title">
+          {{requested_user.username}}'s Tweets
       </br>
       </h1>
       <p class="subtitle">
           {% for tweet in tweets %}
-          {% if tweet.author == user %}
+          {% if tweet.author == requested_user %}
           <div class="box">
                 <article class="media">
                   <div class="media-left">
@@ -63,10 +201,6 @@
                         <strong>{{tweet.author}} @ </strong><small>{{tweet.created_at}}</small>
                       </br>
                         {{tweet.content}}
-                        
-                      </br>
-                      This tweet belongs to you. If you don't like it anymore, you can <a href="/delete?id={{tweet.id}}"> delete it</a>
-                      
                       </p>
                       
                     </div>
@@ -85,10 +219,7 @@
       </br>
           {% endfor %}
       </p>
-      <p>
-          Want to delete your account? We're sad to see you go :( but here's the <a href="/delete_account?id={{user.id}}"> link</a>
-      </p>
-    </div>
-  </section>
+  {% endif %}
+</section>
   </body>
 </html>
