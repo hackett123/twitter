@@ -41,6 +41,7 @@
         </h1>
         <p class="subtitle">
             {% for tweet in tweets %}
+            {% if tweet.author not in user.blocked_users.all %}
             <div class="box">
                   <article class="media">
                     <div class="media-left">
@@ -72,6 +73,7 @@
                   </article>
                 </div>           
         </br>
+        {%endif%}
             {% endfor %}
         </p>
         </div>

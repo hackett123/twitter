@@ -16,6 +16,9 @@ class User(AbstractUser):
     likes = models.IntegerField(default=0)
     bio = models.TextField(default="Hi! This is my twitter!")
     profile_pic = models.CharField(max_length=200, default="https://bulma.io/images/placeholders/128x128.png")
+    followers = models.ManyToManyField('self', related_name="followers")
+    following = models.ManyToManyField('self', related_name="following")
+    blocked_users = models.ManyToManyField('self', related_name="blocked_users")
 
 
 class Hashtag(models.Model):
@@ -31,3 +34,6 @@ class Tweet(models.Model):
     hashtags = models.ManyToManyField(Hashtag)
     likes = models.IntegerField(default=0)
     liked_by = models.ManyToManyField(User, related_name = "liked_by")
+
+class Reply(models.Model):
+    pass

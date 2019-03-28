@@ -119,6 +119,51 @@ def change_pic(request):
         user.save()
     return redirect("/home")
 
+def establish_follow(request):
+    if request.method == "POST":
+        curr_user = request.user
+        for user in curr_user.following.all():
+            print(curr_user.username, " is following ", user.username)
+        user_to_follow = User.objects.get(id=request.POST['id'])
+        if curr_user not in user_to_follow.followers.all():
+            user_to_follow.followers.add(curr_user)
+            user_to_follow.save()
+        if user_to_follow not in curr_user.following.all():
+            curr_user.following.add(user_to_follow)
+            curr_user.save()
+    return redirect("/home")
+
+def break_follow(request):
+    if request.method == "POST":
+        curr_user = request.user
+        user_to_unfollow = User.objects.get(id=request.POST['id'])
+        print(user_to_unfollow.username, " still follows ", curr_user.username, " : ", (curr_user in user_to_unfollow.following.all()))
+        print(curr_user.username, " still followed by ", user_to_unfollow.username, " : ", (user_to_unfollow in curr_user.following.all()))
+        if curr_user in user_to_unfollow.followers.all():
+            user_to_unfollow.followers.remove(curr_user)
+            user_to_unfollow.save()
+        print(user_to_unfollow.username, " still follows ", curr_user.username, " : ", (curr_user in user_to_unfollow.following.all()))
+        print(curr_user.username, " still followed by ", user_to_unfollow.username, " : ", (user_to_unfollow in curr_user.following.all()))     
+        if user_to_unfollow in curr_user.following.all():
+            curr_user.following.remove(user_to_unfollow)
+            curr_user.save()
+        print(user_to_unfollow.username, " still follows ", curr_user.username, " : ", (curr_user in user_to_unfollow.following.all())) 
+        return redirect("/home")
+
+def block_user(request):
+    if request.method == "POST":
+        curr_user = request.user
+        user_to_block = User.objects.get(id=request.POST['id'])
+        curr_user.blocked_users.add(user_to_block)
+        if user_to_block in curr_user.following.all():
+            curr_user.followers.remove(user_to_block)
+        if curr_user in user_to_block.followers.all():
+            user_to_block.followers.remove(curr_user)
+        curr_user.save()
+        user_to_block.save()
+    return redirect("/home")
+            
+
 
 def hashtag(request):
     hashtag = Hashtag.objects.get(id=request.GET['id'])
