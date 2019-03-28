@@ -2,17 +2,29 @@ from django.shortcuts import render, redirect
 
 '''These imports are standard features that Django gives us'''
 from django.contrib.auth import authenticate, login, logout
-from core.models import Tweet, User, Hashtag
+from core.models import Tweet, User, Hashtag, Reply
 
 # this import is for parsing for hashtags, used stack overflow to find the syntax.
 import re
 
+
+light_theme = "https://unpkg.com/bulmaswatch/cerulean/bulmaswatch.min.css"
+dark_theme = "https://unpkg.com/bulmaswatch/darkly/bulmaswatch.min.css"
 
 
 # Create your views here.
 def splash(request):
     users = User.objects.all()
     return render(request, "splash.html", {"users":users})
+
+def toggle_dark_mode(request):
+    request.user.is_dark = not request.user.is_dark
+    if request.user.is_dark :
+        request.user.theme = dark_theme
+    else :
+        request.user.theme = light_theme
+    request.user.save()
+    return redirect("/home")
 
 def home(request):
     full_hashtag_set = set()
@@ -120,35 +132,26 @@ def change_pic(request):
     return redirect("/home")
 
 def establish_follow(request):
-    if request.method == "POST":
-        curr_user = request.user
-        for user in curr_user.following.all():
-            print(curr_user.username, " is following ", user.username)
-        user_to_follow = User.objects.get(id=request.POST['id'])
-        if curr_user not in user_to_follow.followers.all():
-            user_to_follow.followers.add(curr_user)
-            user_to_follow.save()
-        if user_to_follow not in curr_user.following.all():
-            curr_user.following.add(user_to_follow)
-            curr_user.save()
-    return redirect("/home")
+    curr_user = request.user
+    user_to_follow = User.objects.get(id=request.GET['id'])
+    if curr_user not in user_to_follow.followers.all() or user_to_follow not in curr_user.following.all():
+        user_to_follow.followers.add(curr_user)
+        curr_user.following.add(user_to_follow)
+        user_to_follow.save()
+        curr_user.save()
+        
+    return redirect('/home')
 
 def break_follow(request):
-    if request.method == "POST":
-        curr_user = request.user
-        user_to_unfollow = User.objects.get(id=request.POST['id'])
-        print(user_to_unfollow.username, " still follows ", curr_user.username, " : ", (curr_user in user_to_unfollow.following.all()))
-        print(curr_user.username, " still followed by ", user_to_unfollow.username, " : ", (user_to_unfollow in curr_user.following.all()))
-        if curr_user in user_to_unfollow.followers.all():
-            user_to_unfollow.followers.remove(curr_user)
-            user_to_unfollow.save()
-        print(user_to_unfollow.username, " still follows ", curr_user.username, " : ", (curr_user in user_to_unfollow.following.all()))
-        print(curr_user.username, " still followed by ", user_to_unfollow.username, " : ", (user_to_unfollow in curr_user.following.all()))     
-        if user_to_unfollow in curr_user.following.all():
-            curr_user.following.remove(user_to_unfollow)
-            curr_user.save()
-        print(user_to_unfollow.username, " still follows ", curr_user.username, " : ", (curr_user in user_to_unfollow.following.all())) 
-        return redirect("/home")
+    curr_user = request.user
+    user_to_unfollow = User.objects.get(id=request.GET['id'])
+    if curr_user in user_to_unfollow.followers.all():
+        user_to_unfollow.followers.remove(curr_user)
+        curr_user.following.remove(user_to_unfollow)
+        
+        user_to_unfollow.save()
+        curr_user.save()
+    return redirect('/home')
 
 def block_user(request):
     if request.method == "POST":
@@ -170,7 +173,33 @@ def hashtag(request):
     tweets = Tweet.objects.all()
     tweets_used = list()
     for tweet in tweets:
-        if (hashtag in tweet.hashtags.all()):
+        if hashtag in tweet.hashtags.all():
             tweets_used.append(tweet)
     return render(request, "hashtag.html", {"hashtag":hashtag, "tweets_used":tweets_used[::-1]})
+
+def reply_to_tweet(request):
+    if request.method == "POST":
+        author = request.user
+        tweet_id = request.POST.get('tweet_id')
+        tweet = Tweet.objects.get(id=tweet_id)
+        content = request.POST.get('content')
+        reply = Reply.objects.create(author=author, content=content)
+        tweet.replies.add(reply)
+        tweet.save()
+        print(reply.content)
+    return redirect("/home")
+
+def like_reply(request):
+    reply = Reply.objects.get(id=request.GET['id'])
+    user = request.user
+    if user in reply.liked_by.all():
+        reply.liked_by.remove(user)
+        reply.likes -= 1
+        reply.save()
+    else:
+        reply.liked_by.add(user)
+        reply.likes += 1
+        reply.save()
+    return redirect("/home")
+
 

@@ -15,7 +15,7 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
-from core.views import login_, logout_, signup_, delete_tweet, home, splash, delete_account, like_tweet, profile, hashtag, change_bio, change_pic, establish_follow, break_follow, block_user
+from core.views import login_, logout_, signup_, delete_tweet, home, splash, delete_account, like_tweet, profile, hashtag, change_bio, change_pic, establish_follow, break_follow, block_user, reply_to_tweet, like_reply, toggle_dark_mode
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -33,6 +33,9 @@ urlpatterns = [
     path("hashtag", hashtag, name="hashtag"),
     path("establish_follow", establish_follow, name="establish_follow"),
     path("break_follow", break_follow, name="break_follow"),
-    path("block_user", block_user, name="block_user")
+    path("block_user", block_user, name="block_user"),
+    path("reply_to_tweet", reply_to_tweet, name="reply_to_tweet"),
+    path("like_reply", like_reply, name="like_reply"),
+    path("toggle_dark_mode", toggle_dark_mode, name="toggle_dark_mode")
 
 ]

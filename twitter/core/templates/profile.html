@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Welcome to 192's Twitter!</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.7.4/css/bulma.min.css">
+    <link rel="stylesheet" href="{{curr_user.theme}}">
     <script defer src="https://use.fontawesome.com/releases/v5.3.1/js/all.js"></script>
   </head>
   <body>
@@ -34,7 +34,7 @@
       </p>
     <p>
     </br>
-    <form method="POST" action="/change_bio">
+      <form method="POST" action="/change_bio">
         {% csrf_token %}
         <div>
             <input name="bio" class="input is-primary" type="text" placeholder="If you want to change your bio, rewrite it here and hit submit">
@@ -56,9 +56,6 @@
   </form>
 
       </p>
-
-
-
 
       <div class="columns">
           <div class="column">
@@ -198,39 +195,18 @@
           <strong>{{requested_user.username}}'s profile picture </strong> : <img src={{requested_user.profile_pic}} width="128" height="128">
       </p>
 
-      <form method="POST" action="/establish_follow">
-        {% csrf_token %}
-        <div>
-            <input type="hidden" name="id", value="{{requested_user.id}}">
-            <input type="submit" class="button is-primary" value="Follow {{requested_user.username}}!"/>
-        </div>
-        </br>
-    </br>
-    </form>
+    <p>
+      {% if requested_user not in curr_user.following.all %}
+        <a href="/establish_follow?id={{requested_user.id}}"> Follow {{requested_user.username}}</a>
+      {% endif %}
+      {% if requested_user in curr_user.following.all %}
+      <a href="/break_follow?id={{requested_user.id}}"> Unfollow {{requested_user.username}}</a>
+      {% endif %}
+    </p>
+  </br>
     
-    <form method="POST" action="/break_follow">
-      {% csrf_token %}
-      <div>
-          <input type="hidden" name="id", value="{{requested_user.id}}">
-          <input type="submit" class="button is-primary" value="Unfollow {{requested_user.username}}"/>
-      </div>
-      </br>
-  </br>
-  </form>
-
-    <form method="POST" action="/block_user">
-      {% csrf_token %}
-      <div>
-          <input type="hidden" name="id", value="{{requested_user.id}}">
-          <input type="submit" class="button is-primary" value="BLOCK {{requested_user.username}} (WARNING : THIS CANNOT BE UNDONE.)"/>
-      </div>
-      </br>
-  </br>
-  </form>
-
       <h1 class="title">
           {{requested_user.username}}'s Tweets
-      </br>
       </h1>
       <p class="subtitle">
           {% for tweet in tweets %}
@@ -271,6 +247,15 @@
       </br>
           {% endfor %}
       </p>
+      <form method="POST" action="/block_user">
+        {% csrf_token %}
+        <div>
+            <input type="hidden" name="id", value="{{requested_user.id}}">
+            <input type="submit" class="button is-primary" value="BLOCK {{requested_user.username}} (WARNING : THIS CANNOT BE UNDONE.)"/>
+        </div>
+        </br>
+    </br>
+    </form>
   {% endif %}
 </section>
   </body>

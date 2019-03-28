@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Welcome to 192's Twitter!</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.7.4/css/bulma.min.css">
+    <link rel="stylesheet" href="{{user.theme}}">
     <script defer src="https://use.fontawesome.com/releases/v5.3.1/js/all.js"></script>
   </head>
   <body>
@@ -17,7 +17,13 @@
       </br>
     </h2>
       <p class="subtitle">
-          All done? <a href="/logout"> Logout</a>
+          All done? <a href="/logout"> Logout</a> </br>
+          {% if not user.is_dark %}
+          <a href="/toggle_dark_mode">Dark Mode</a>
+          {% endif %}
+          {% if user.is_dark %}
+          <a href="/toggle_dark_mode">Light Mode</a>
+          {% endif %}
       </p>
       <p class="subtitle">
           Something on your mind? Tell us!
@@ -34,7 +40,7 @@
             </form>
       </p>
       <div class="columns">
-        <div class="column">
+        <div class="column is-three-quarter">
           <h1 class="title">
             Recent Tweets
         </br>
@@ -56,10 +62,31 @@
                         </br>
                           {{tweet.content}}
                       </br>
+                      {% if tweet.hashtags.count != 0 %}
                           Hashtags used : {% for hashtag in tweet.hashtags.all %} #<a href="hashtag?id={{hashtag.id}}">{{hashtag.name}}</a>, {% endfor %}
+                      {% endif %}
                   </br>
                          
                         </p>
+
+                        {% if tweet.replies.all.count != 0 %}
+                        <p>
+                          <div class="box">
+                          <strong>Replies :</strong> </br>
+                          {% for reply in tweet.replies.all %}
+                          <div class="box">
+                            <strong> <a href="/profile?id={{reply.author.id}}"> {{reply.author}}</a></strong> @ {{reply.created_at}}</br>
+                            {{reply.content}}
+                          </br>
+                          <p>
+                              <a href="like_reply?id={{reply.id}}"> Like ({{reply.likes}})</a>
+                          </p>
+                            
+                          </div>
+                          {% endfor %}
+                          </div>
+                        </p>
+                        {% endif %}
                         
                       </div>
                       <nav class="level is-mobile">
@@ -69,6 +96,18 @@
                               </p>
                         </div>
                       </nav>
+                      <form method="POST" action="/reply_to_tweet">
+                        {% csrf_token %}
+                        <div>
+                        <input name="content" class="input is-primary" type="text" placeholder="Your next great reply">
+                        <input name="tweet_id" type ="hidden" value="{{ tweet.id }}">
+                        </div>
+                        <div>
+                        </br>
+                        <input type="submit" class="button is-primary" value="post your reply!"/>
+                    </div>
+                </br>
+                    </form>
                     </div>
                   </article>
                 </div>           
@@ -108,7 +147,7 @@
         </br>
         All code can be accessed upon request.
       </br>
-        Trademark : Hackett Productions @2019
+        Thanks go out to the package Bulmaswitch by Github user <strong>Jenil</strong> for custom themes.
         </p>
       </div>
     </footer>
